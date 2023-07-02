@@ -1,5 +1,5 @@
 import { useSelector, useDispatch } from "react-redux";
-import { decrement, increment } from "./redux/counter/counterReducer";
+import { decrement, increment } from "../redux/counter/counterReducer";
 
 const CounterRedux = () => {
   /* 

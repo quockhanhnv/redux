@@ -5,7 +5,7 @@ import "./index.css";
 
 import { Provider } from "react-redux";
 // import storeRedux from "./components/redux/configureStore.jsx";
-import storeReduxToolkit from "./components/redux-toolkit/configureStore.jsx";
+import storeReduxToolkit from "./redux-toolkit/configureStore.jsx";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
