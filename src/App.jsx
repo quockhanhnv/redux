@@ -1,42 +1,47 @@
 import "./App.css";
 import { useSelector } from "react-redux";
-// import CounterRedux from "./components/CounterRedux";
+
 import CounterReduxToolkit from "./components/CounterReduxToolkit";
 import Card from "./components/Card";
 import ToogleDarkMode from "./components/ToogleDarkMode";
+import HackerNews from "./components/HackerNews/HackerNews";
+import Navbar from "./components/Navbar/Navbar";
+
+import { Fragment } from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { publicRoutes } from "./routes";
+import { DefaultLayout } from "./layouts";
 
 function App() {
-  /* =================== Start redux =================== */
-
-  /* 
-    const reducer = combineReducers({
-      counter: counterReducer, // key: value
-    });
-  */
-  /* =================== End redux =================== */
-
-  // reducer.counter.count
-  const { count } = useSelector((state) => state.counter);
-
   return (
-    <div>
-      {/* <div>
-        <h2>The count from Store Redux is: {count}</h2>
-        <CounterRedux></CounterRedux>
-      </div> */}
-      <div>
-        [AppComponent] Count from Store ReduxToolkit is: {count}
-        <CounterReduxToolkit></CounterReduxToolkit>
+    <Router>
+      <div className="App">
+        <Routes>
+          {publicRoutes.map((route, index) => {
+            const Page = route.component;
+            let Layout = DefaultLayout;
+
+            if (route.layout) {
+              Layout = route.layout;
+            } else if (route.layout === null) {
+              Layout = Fragment;
+            }
+
+            return (
+              <Route
+                key={index}
+                path={route.path}
+                element={
+                  <Layout>
+                    <Page />
+                  </Layout>
+                }
+              />
+            );
+          })}
+        </Routes>
       </div>
-      <br />
-      <hr /> <br />
-      <ToogleDarkMode></ToogleDarkMode>
-      <div className="flex justify-center items-center pt-5">
-        <Card></Card>
-        <Card></Card>
-      </div>
-      <br />
-    </div>
+    </Router>
   );
 }
 

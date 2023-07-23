@@ -7,7 +7,6 @@ export const globalSlice = createSlice({
   },
   reducers: {
     toggleDarkMode: (state, action) => {
-      console.log(action);
       return { ...state, darkMode: action.payload };
     },
   },
