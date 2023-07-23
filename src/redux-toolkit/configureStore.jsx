@@ -2,6 +2,10 @@ import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import counterSlice from "./counter/counterSlice";
 import globalSlice from "./global/globalSlice";
 import logger from "redux-logger";
+import createSagaMiddleware from "redux-saga";
+
+// create the saga middleware
+const sagaMiddleware = createSagaMiddleware();
 
 // sau này app sẽ có rất nhiều reducer
 export const reducer = combineReducers({
@@ -33,7 +37,8 @@ const myLoggerMiddleware = (store) => (next) => (action) => {
 */
 const store = configureStore({
   reducer, //reducer: reducer
-  middleware: (gDM) => gDM().concat(logger, myLoggerMiddleware),
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(logger, myLoggerMiddleware, sagaMiddleware),
 });
 
 // Redux middleware
@@ -42,5 +47,7 @@ store.subscribe(() => {
 
   console.log(`current state: ${store.getState().counter.count}`);
 });
+
+// sagaMiddleware.run(rootSaga);
 
 export default store;
