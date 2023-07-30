@@ -1,16 +1,10 @@
 // Layouts
 
 // Pages
-import ReduxDemoPage from "../pages/ReduxDemo/ReduxDemoPage";
-import ToogleDarkModePage from "../pages/ToogleDarkMode/ToogleDarkModePage";
-import HackerNewsPage from "../pages/HackerNews/HackerNewsPage";
+import SagaDemoPage from "../pages/SagaDemo/SagaDemoPage";
 
 // Public routes
-const publicRoutes = [
-  { path: "/", component: ReduxDemoPage },
-  { path: "/toogle-dark-mode", component: ToogleDarkModePage },
-  { path: "/hacker-news", component: HackerNewsPage },
-];
+const publicRoutes = [{ path: "/", component: SagaDemoPage }];
 
 const privateRoutes = [];
 

@@ -1,52 +1,29 @@
-import React, { useEffect, useRef, useState } from "react";
-import axios from "axios";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { getNews, setQuery } from "../../sagas/news/newsSlice";
+import { debounce } from "lodash";
 
 // https://hn.algolia.com/api/v1/search?query=react
 const HackerNews = () => {
-  const [hits, setHits] = useState([]);
-  const [query, setQuery] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [errorMessage, setErrorMessage] = useState("");
-  const handleFetchData = useRef({});
-  const [url, setUrl] = useState(
-    `https://hn.algolia.com/api/v1/search?query=${query}`
-  );
+  const dispatch = useDispatch();
 
-  const isMounted = useRef(true);
+  const { hits, query, loading, errorMessage } = useSelector(
+    (state) => state.news
+  );
+  console.log("hits :>> ", hits);
 
   useEffect(() => {
-    console.log("isMounted.current :>> ", isMounted.current);
+    /*  dispatch getNews() thì watcher saga sẽ lắng nghe xem là thằng nào dispatch
+          dựa vào type của action => getNews.type để gọi hàm lấy news về
+          yield takeLatest(getNews.type, handleGetNews); ( file saga.js)
+    */
+    dispatch(getNews(query));
+  }, [dispatch, query]);
 
-    return () => {
-      // unmounted component
-      console.log("cleanup function running ....");
-      isMounted.current = false;
-    };
-  });
-
-  handleFetchData.current = async () => {
-    console.log("handleFetchData");
-    setLoading(true);
-
-    try {
-      const response = await axios.get(url);
-      console.log("isMounted.current :>> ", isMounted.current);
-      setTimeout(() => {
-        if (isMounted.current) {
-          console.log("response.data :>> ", response.data);
-          setHits(response.data?.hits || []);
-          setLoading(false);
-        }
-      }, 3000);
-    } catch (error) {
-      setLoading(false);
-      setErrorMessage(`The error happend ${error}`);
-    }
-  };
-
-  React.useEffect(() => {
-    handleFetchData.current();
-  }, [url]);
+  // set 0.5s sau khi end-user ngừng gõ mới chạy hàm search
+  const handleChangeQuery = debounce((e) => {
+    dispatch(setQuery(e.target.value)); // có thể dùng query là state nhưng đang dùng redux-saga thì nên dùng redux-saga hết
+  }, 500);
 
   return (
     <div className="bg-white mx-auto mt-5 mb-5 p-5 rounded-lg shadow-md w-2/4">
@@ -56,16 +33,8 @@ const HackerNews = () => {
           className="border border-gray-200 p-5 block w-full rounded-md transition-all focus:border-blue-400"
           placeholder="Typing your keyword..."
           defaultValue={query}
-          onChange={(e) => setQuery(e.target.value)}
+          onChange={handleChangeQuery}
         />
-        <button
-          onClick={() =>
-            setUrl(`https://hn.algolia.com/api/v1/search?query=${query}`)
-          }
-          className="bg-blue-500 text-white font-semibold p-5 rounded-md flex-shrink-0"
-        >
-          Fetching
-        </button>
       </div>
       {loading && (
         <div className="loading w-8 h-8 rounded-full border-blue-500 border-4 border-r-4 border-r-transparent animate-spin mx-auto my-10"></div>
@@ -75,6 +44,7 @@ const HackerNews = () => {
       )}
       <div className="flex flex-wrap gap-5">
         {!loading &&
+          hits &&
           hits.length > 0 &&
           hits.map((item, index) => {
             if (!item.title || item.title.length <= 0) return null;
