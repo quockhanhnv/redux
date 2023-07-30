@@ -1,7 +1,8 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getNews, setQuery } from "../../sagas/news/newsSlice";
+//import { getNews, setQuery } from "../../sagas/news/newsSlice";
 import { debounce } from "lodash";
+import { handleFetchNews } from "../../redux-thunk/newsSlice";
 
 // https://hn.algolia.com/api/v1/search?query=react
 const HackerNews = () => {
@@ -13,16 +14,12 @@ const HackerNews = () => {
   console.log("hits :>> ", hits);
 
   useEffect(() => {
-    /*  dispatch getNews() thì watcher saga sẽ lắng nghe xem là thằng nào dispatch
-          dựa vào type của action => getNews.type để gọi hàm lấy news về
-          yield takeLatest(getNews.type, handleGetNews); ( file saga.js)
-    */
-    dispatch(getNews(query));
+    dispatch(handleFetchNews("ReactJs"));
   }, [dispatch, query]);
 
   // set 0.5s sau khi end-user ngừng gõ mới chạy hàm search
   const handleChangeQuery = debounce((e) => {
-    dispatch(setQuery(e.target.value)); // có thể dùng query là state nhưng đang dùng redux-saga thì nên dùng redux-saga hết
+    //dispatch(setQuery(e.target.value)); // có thể dùng query là state nhưng đang dùng redux-saga thì nên dùng redux-saga hết
   }, 500);
 
   return (
